@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+const DmxHue = require('../index');
+const cli = new DmxHue(process.argv.slice(2));
+cli.run();

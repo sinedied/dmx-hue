@@ -1,0 +1,52 @@
+{
+  "name": "dmx-hue",
+  "version": "1.0.0",
+  "description": "Art-Net node to control Philips Hue lights with DMX",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sinedied/dmx-hue.git"
+  },
+  "main": "index.js",
+  "bin": {
+    "dmx-hue": "./bin/dmx-hue"
+  },
+  "scripts": {
+    "test": "eslint *.js lib/*.js",
+    "postpublish": "git tag -a $npm_package_version -m '$npm_package_version' && git push --tags"
+  },
+  "keywords": [
+    "philips",
+    "hue",
+    "dmx",
+    "artnet",
+    "art-net",
+    "node",
+    "cli",
+    "light",
+    "show",
+    "bridge"
+  ],
+  "author": "Yohan Lasorsa",
+  "license": "MIT",
+  "homepage": "https://github.com/sinedied/dmx-hue",
+  "bugs": {
+    "url": "https://github.com/sinedied/dmx-hue/issues"
+  },
+  "dependencies": {
+    "color": "^1.0.3",
+    "conf": "^1.1.0",
+    "inquirer": "^3.0.6",
+    "minimist": "^1.2.0",
+    "node-hue-api": "^2.4.1"
+  },
+  "devDependencies": {
+    "eslint": "^3.17.0",
+    "eslint-config-xo-space": "^0.16.0"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "eslintConfig": {
+    "extends": "xo-space/esnext"
+  }
+}
