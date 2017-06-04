@@ -14,7 +14,7 @@ Create an ArtNet DMX<>Hue bridge.
 
 Options:
   -h, --host       Host address to listen on              [default: '0.0.0.0']
-  -a, --address    Set DMX address (range 0-510)          [default: 0]
+  -a, --address    Set DMX address (range 1-511)          [default: 0]
   -t, --transition Set transition time in ms              [default: 100]
                    Can also be set to 'channel' to enable a dedicated DMX
                    channel on which 1 step equals 100ms.
@@ -58,7 +58,7 @@ class DmxHue {
   }
 
   start(options) {
-    if (options.address < 0 || options.address >= 511) {
+    if (options.address <= 0 || options.address > 511) {
       Util.exit('Invalid DMX address');
     }
 
@@ -71,7 +71,7 @@ class DmxHue {
         options.transitionChannel = options.transition === 'channel';
         options.colors = {};
         const dmxChannelCount = (3 * options.lights.length) + (options.transitionChannel ? 1 : 0);
-        const extraDmxAddress = options.address + dmxChannelCount - 511;
+        const extraDmxAddress = options.address + dmxChannelCount - 512;
 
         if (extraDmxAddress >= 0) {
           console.warn('Warning: not enough DMX channels, some lights will be unavailable');
@@ -83,6 +83,9 @@ class DmxHue {
       })
       .then(() => {
         let currentAddress = options.address;
+        if (options.noLimit) {
+          console.log('Warning, safety rate limiting is disabled!\n');
+        }
         console.log('DMX addresses mapping:');
         if (options.transitionChannel) {
           console.log(` ${currentAddress++}: transition time`);
@@ -105,7 +108,7 @@ class DmxHue {
       this._delayedUpdate = null;
     }
 
-    let address = options.address;
+    let address = options.address - 1;
 
     if (options.transitionChannel) {
       options.transition = dmxData[address] * 100;
@@ -149,11 +152,11 @@ class DmxHue {
             {
               type: 'input',
               name: 'dmxAddress',
-              message: 'Set DMX address',
+              message: 'Set DMX address (range 1-511)',
               default: Util.config.get('dmxAddress') || 0,
               validate: input => {
                 const value = parseInt(input, 10);
-                return value >= 0 && value < 511;
+                return value > 0 && value <= 511;
               }
             },
             {
@@ -221,7 +224,7 @@ class DmxHue {
 
     return this.start({
       host: this._args.host,
-      address: this._args.address || Util.config.get('dmxAddress') || 0,
+      address: this._args.address || Util.config.get('dmxAddress') || 1,
       colorloop: this._args.colorloop || Util.config.get('colorloop') || false,
       transition: this._args.transition || Util.config.get('transition') || 100,
       noLimit: this._args.transition['no-limit'] || Util.config.get('noLimit') || false
