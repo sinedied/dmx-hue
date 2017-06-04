@@ -33,12 +33,41 @@ Options:
                    Can also be set to 'channel' to enable a dedicated DMX
                    channel on which 1 step equals 100ms.
 
+Note: options overrides settings saved during setup.
+
 Commands:
   setup            Configure hue bridge and DMX options
     -l, --list     List bridges on the network
     -i, --ip       Set bridge IP (use first bridge if not specified)
     --force        Force bridge setup if already configured
 ```
+
+### Setup
+
+Before being able to control Hue lights on your network, your first have to setup your Hue bridge with the app.
+Run `dmx-hue setup`, press the **link button** on your Hue bridge within 30s, then run `dmx-hue setup` again.
+
+After that, follow instructions to configure the default settings.
+You can change these settings later at anytime by running `dmx-hue setup` again.
+
+Once your Hue bridge is correctly setup, just run `dmx-hue` to start the Art-Net node, then go crazy with your
+favorite DMX controller! :bulb:
+
+If you're looking for a nice cross-platform & open-source DMX software controller, you should take a look at
+[QLC+](http://www.qlcplus.org/).
+
+### Hue lights specific features
+
+#### Colorloop
+
+When colorloop option is enabled, your can enable Hue light automatic colorloop mode by setting the R/G/B channels of
+a given light to the value `1`.
+
+#### Transition time
+
+Hue light can automatically perform transitions from one state to another in a specified time. This is especially
+useful since there is a somewhat low update rate limitation on Hue lights (see next section for more details). If you
+want to go creative and be able to adjust transition time dynamically, you can dedicate a DMX channel for it.
 
 ## Philips Hue response times vs DMX
 
