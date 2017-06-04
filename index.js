@@ -15,12 +15,16 @@ Create an ArtNet DMX<>Hue bridge.
 Options:
   -h, --host       Host address to listen on              [default: '0.0.0.0']
   -a, --address    Set DMX address (range 0-510)          [default: 0]
-  -c, --colorloop  Enable colorloop feature               [default: false]
-                   When enabled, setting all RGB channels of a light to 1 will
-                   enable colorloop mode.
   -t, --transition Set transition time in ms              [default: 100]
                    Can also be set to 'channel' to enable a dedicated DMX
                    channel on which 1 step equals 100ms.
+  -c, --colorloop  Enable colorloop feature
+                   When enabled, setting all RGB channels of a light to 1 will
+                   enable colorloop mode.
+  -n, --no-limit   Disable safety rate limiting
+                   Warning: when this option is enabled, make sure to not send
+                   more than <number_of_lights>/10 updates per second, or you
+                   might overload your Hue bridge.
 
 Note: options overrides settings saved during setup.
 
@@ -35,7 +39,7 @@ class DmxHue {
 
   constructor(args) {
     this._args = minimist(args, {
-      boolean: ['list', 'force', 'help', 'version', 'colorloop'],
+      boolean: ['list', 'force', 'help', 'version', 'colorloop', 'no-limit'],
       string: ['ip', 'host', 'transition'],
       number: ['address'],
       alias: {
@@ -44,7 +48,8 @@ class DmxHue {
         h: 'host',
         a: 'address',
         t: 'transition',
-        c: 'colorloop'
+        c: 'colorloop',
+        n: 'no-limit'
       }
     });
     this._hue = new Hue();
@@ -108,7 +113,6 @@ class DmxHue {
     }
 
     const dmx = dmxData.slice(address, address + (3 * options.lights.length));
-    let retryLater = false;
     let j = 0;
 
     for (let i = 0; i < options.lights.length; i++) {
@@ -121,23 +125,16 @@ class DmxHue {
       if (!previous || color[0] !== previous[0] || color[1] !== previous[1] || color[2] !== previous[2]) {
         // Rate limit Hue API to 0,1s between calls
         const now = new Date().getTime();
-        if (now - this._lastUpdate >= 100) {
+        if (options.noLimit || now - this._lastUpdate >= 100) {
           const state = this._hue.createLightState(color[0], color[1], color[2], options);
           this._lastUpdate = now;
           this._hue.setLight(lightId, state);
           options.colors[lightId] = color;
-        } else {
-          retryLater = true;
+        } else if (!this._delayedUpdate) {
+          // Make sure to apply update later if changes could not be applied
+          this._delayedUpdate = setTimeout(() => this._updateLights(dmxData, options), 100);
         }
       }
-    }
-
-    // Make sure to apply update later if changes could not be applied
-    if (retryLater) {
-      if (this._delayedUpdate) {
-        clearTimeout(this._delayedUpdate);
-      }
-      this._delayedUpdate = setTimeout(() => this._updateLights(dmxData, options), 100);
     }
   }
 
@@ -226,7 +223,8 @@ class DmxHue {
       host: this._args.host,
       address: this._args.address || Util.config.get('dmxAddress') || 0,
       colorloop: this._args.colorloop || Util.config.get('colorloop') || false,
-      transition: this._args.transition || Util.config.get('transition') || 100
+      transition: this._args.transition || Util.config.get('transition') || 100,
+      noLimit: this._args.transition['no-limit'] || Util.config.get('noLimit') || false
     });
   }
 
