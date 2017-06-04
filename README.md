@@ -24,12 +24,12 @@ Usage: dmx-hue [setup] [options]
 Create an ArtNet DMX<>Hue bridge.
 
 Options:
-  -h, --host       Host address to listen on               [default: '0.0.0.0']
-  -a, --address    Set DMX address (range 0-510)           [default: 0]
-  -c, --colorloop  Enable colorloop feature                [default: false]
+  -h, --host       Host address to listen on              [default: '0.0.0.0']
+  -a, --address    Set DMX address (range 0-510)          [default: 0]
+  -c, --colorloop  Enable colorloop feature               [default: false]
                    When enabled, setting all RGB channels of a light to 1 will
                    enable colorloop mode.
-  -t, --transition Set transition time in ms               [default: 100]
+  -t, --transition Set transition time in ms              [default: 100]
                    Can also be set to 'channel' to enable a dedicated DMX
                    channel on which 1 step equals 100ms.
 
@@ -67,7 +67,7 @@ a given light to the value `1`.
 
 Hue light can automatically perform transitions from one state to another in a specified time. This is especially
 useful since there is a somewhat low update rate limitation on Hue lights (see next section for more details). If you
-want to go creative and be able to adjust transition time dynamically, you can dedicate a DMX channel for it.
+want to go creative and be able to adjust transition times dynamically, you can dedicate a DMX channel for it.
 
 ## Philips Hue response times vs DMX
 
