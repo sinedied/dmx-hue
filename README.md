@@ -12,6 +12,8 @@
 
 ## Installation
 
+Install [NodeJS](https://nodejs.org), then open a command prompt:
+
 ```bash
 npm install -g dmx-hue
 ```
