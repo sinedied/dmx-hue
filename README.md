@@ -6,6 +6,8 @@
 [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+![dmx-hue-logo](https://cloud.githubusercontent.com/assets/593151/26761623/710db1ba-4933-11e7-9a08-471e3f9fb9e5.png)
+
 > Art-Net node to control Philips Hue lights with DMX
 
 ## Installation
