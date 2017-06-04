@@ -49,6 +49,7 @@ class DmxHue {
     });
     this._hue = new Hue();
     this._lastUpdate = 0;
+    this._delayedUpdate = null;
   }
 
   start(options) {
@@ -94,6 +95,11 @@ class DmxHue {
   }
 
   _updateLights(dmxData, options) {
+    if (this._delayedUpdate) {
+      clearTimeout(this._delayedUpdate);
+      this._delayedUpdate = null;
+    }
+
     let address = options.address;
 
     if (options.transitionChannel) {
@@ -102,6 +108,7 @@ class DmxHue {
     }
 
     const dmx = dmxData.slice(address, address + (3 * options.lights.length));
+    let retryLater = false;
     let j = 0;
 
     for (let i = 0; i < options.lights.length; i++) {
@@ -119,8 +126,18 @@ class DmxHue {
           this._lastUpdate = now;
           this._hue.setLight(lightId, state);
           options.colors[lightId] = color;
+        } else {
+          retryLater = true;
         }
       }
+    }
+
+    // Make sure to apply update later if changes could not be applied
+    if (retryLater) {
+      if (this._delayedUpdate) {
+        clearTimeout(this._delayedUpdate);
+      }
+      this._delayedUpdate = setTimeout(() => this._updateLights(dmxData, options), 100);
     }
   }
 
