@@ -18,7 +18,7 @@ Options:
   -c, --colorloop  Enable colorloop feature                [default: false]
                    When enabled, setting all RGB channels of a light to 1 will
                    enable colorloop mode.
-  -t, --transition Set transition time in ms               [default: 0]
+  -t, --transition Set transition time in ms               [default: 100]
                    Can also be set to 'channel' to enable a dedicated DMX
                    channel on which 1 step equals 100ms.
 
@@ -207,7 +207,7 @@ class DmxHue {
       host: this._args.host,
       address: this._args.address || Util.config.get('dmxAddress') || 0,
       colorloop: this._args.colorloop || Util.config.get('colorloop') || false,
-      transition: this._args.transition || Util.config.get('transition') || 0
+      transition: this._args.transition || Util.config.get('transition') || 100
     });
   }
 
