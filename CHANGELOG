@@ -1,3 +1,7 @@
+# 1.1.2
+
+- Fixed docs
+
 # 1.1.1
 
 - Fixed DMX adresses starting at 0 instead of 1
