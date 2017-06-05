@@ -15,6 +15,7 @@ Create an ArtNet DMX<>Hue bridge.
 Options:
   -h, --host       Host address to listen on              [default: '0.0.0.0']
   -a, --address    Set DMX address (range 1-511)          [default: 1]
+  -u, --universe   Art-Net universe                       [default: 0]
   -t, --transition Set transition time in ms              [default: 100]
                    Can also be set to 'channel' to enable a dedicated DMX
                    channel on which 1 step equals 100ms.
@@ -41,7 +42,7 @@ class DmxHue {
     this._args = minimist(args, {
       boolean: ['list', 'force', 'help', 'version', 'colorloop', 'no-limit'],
       string: ['ip', 'host', 'transition'],
-      number: ['address'],
+      number: ['address', 'universe'],
       alias: {
         l: 'list',
         i: 'ip',
@@ -49,7 +50,8 @@ class DmxHue {
         a: 'address',
         t: 'transition',
         c: 'colorloop',
-        n: 'no-limit'
+        n: 'no-limit',
+        u: 'universe'
       }
     });
     this._hue = new Hue();
@@ -79,14 +81,18 @@ class DmxHue {
           options.lights = options.lights.slice(0, -lightsToRemove);
         }
 
-        return ArtNet.listen(options.host, data => this._updateLights(data.dmx, options));
+        return ArtNet.listen(options.host, data => {
+          if (data.univers === options.universe) {
+            this._updateLights(data.dmx, options);
+          }
+        });
       })
       .then(() => {
         let currentAddress = options.address;
         if (options.noLimit) {
           console.log('Warning, safety rate limiting is disabled!\n');
         }
-        console.log('DMX addresses mapping:');
+        console.log(`DMX addresses on universe ${options.universe}:`);
         if (options.transitionChannel) {
           console.log(` ${currentAddress++}: transition time`);
         }
@@ -153,11 +159,18 @@ class DmxHue {
               type: 'input',
               name: 'dmxAddress',
               message: 'Set DMX address (range 1-511)',
-              default: Util.config.get('dmxAddress') || 0,
+              default: Util.config.get('dmxAddress') || 1,
               validate: input => {
                 const value = parseInt(input, 10);
                 return value > 0 && value <= 511;
               }
+            },
+            {
+              type: 'input',
+              name: 'universe',
+              message: 'Set Art-Net universe',
+              default: Util.config.get('universe') || 0,
+              validate: input => parseInt(input, 10) > 0
             },
             {
               type: 'confirm',
@@ -177,10 +190,7 @@ class DmxHue {
               message: 'Set transition time in ms',
               default: transition === 'channel' ? 100 : transition,
               when: answers => !answers.transitionChannel,
-              validate: input => {
-                const value = parseInt(input, 10);
-                return value >= 0;
-              }
+              validate: input => parseInt(input, 10) > 0
             },
             {
               type: 'checkbox',
@@ -195,6 +205,7 @@ class DmxHue {
           ])
           .then(answers => {
             Util.config.set('dmxAddress', parseInt(answers.dmxAddress, 10));
+            Util.config.set('universe', parseInt(answers.universe, 10));
             Util.config.set('colorloop', answers.colorloop);
             Util.config.set('transition', answers.transitionChannel ? 'channel' : parseInt(answers.transition, 10));
             Util.config.set('disabledLights', lights
@@ -227,7 +238,8 @@ class DmxHue {
       address: this._args.address || Util.config.get('dmxAddress') || 1,
       colorloop: this._args.colorloop || Util.config.get('colorloop') || false,
       transition: this._args.transition || Util.config.get('transition') || 100,
-      noLimit: this._args.transition['no-limit'] || Util.config.get('noLimit') || false
+      noLimit: this._args['no-limit'] || Util.config.get('noLimit') || false,
+      universe: this._args.universe || Util.config.get('universe') || 0
     });
   }
 

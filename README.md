@@ -28,6 +28,7 @@ Create an ArtNet DMX<>Hue bridge.
 Options:
   -h, --host       Host address to listen on              [default: '0.0.0.0']
   -a, --address    Set DMX address (range 1-511)          [default: 1]
+  -u, --universe   Art-Net universe                       [default: 0]
   -t, --transition Set transition time in ms              [default: 100]
                    Can also be set to 'channel' to enable a dedicated DMX
                    channel on which 1 step equals 100ms.
