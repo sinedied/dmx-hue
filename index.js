@@ -82,7 +82,7 @@ class DmxHue {
         }
 
         return ArtNet.listen(options.host, data => {
-          if (data.univers === options.universe) {
+          if (data.universe === options.universe) {
             this._updateLights(data.dmx, options);
           }
         });
