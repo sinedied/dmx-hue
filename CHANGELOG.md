@@ -1,3 +1,8 @@
+# 1.2.0
+
++ Added Art-Net universe option
+- Fixed some bugs during setup
+
 # 1.1.2
 
 - Fixed docs
