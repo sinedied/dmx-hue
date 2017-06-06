@@ -2,17 +2,18 @@
 
 const minimist = require('minimist');
 const inquirer = require('inquirer');
+const chalk = require('chalk');
 const Util = require('./lib/util');
 const Hue = require('./lib/hue');
 const ArtNet = require('./lib/artnet');
 const pkg = require('./package.json');
 
 const help =
-`Usage: dmx-hue [setup] [options]
+`${chalk.bold('Usage:')} dmx-hue [setup] [options]
 
 Create an ArtNet DMX<>Hue bridge.
 
-Options:
+${chalk.bold('Options:')}
   -h, --host       Host address to listen on              [default: '0.0.0.0']
   -a, --address    Set DMX address (range 1-511)          [default: 1]
   -u, --universe   Art-Net universe                       [default: 0]
@@ -29,7 +30,7 @@ Options:
 
 Note: options overrides settings saved during setup.
 
-Commands:
+${chalk.bold('Commands:')}
   setup            Configure hue bridge and DMX options
     -l, --list     List bridges on the network
     -i, --ip       Set bridge IP (use first bridge if not specified)
@@ -76,7 +77,7 @@ class DmxHue {
         const extraDmxAddress = options.address + dmxChannelCount - 512;
 
         if (extraDmxAddress >= 0) {
-          console.warn('Warning: not enough DMX channels, some lights will be unavailable');
+          console.warn(chalk.yellow('Warning: not enough DMX channels, some lights will be unavailable'));
           const lightsToRemove = Math.ceil(extraDmxAddress / 3.0);
           options.lights = options.lights.slice(0, -lightsToRemove);
         }
@@ -90,14 +91,14 @@ class DmxHue {
       .then(() => {
         let currentAddress = options.address;
         if (options.noLimit) {
-          console.log('Warning, safety rate limiting is disabled!\n');
+          console.warn(chalk.yellow('Warning, safety rate limiting is disabled!\n'));
         }
-        console.log(`DMX addresses on universe ${options.universe}:`);
+        console.log(chalk.bold(`DMX addresses on universe ${options.universe}:`));
         if (options.transitionChannel) {
           console.log(` ${currentAddress++}: transition time`);
         }
         options.lights.forEach(light => {
-          console.log(` ${currentAddress}: ${light.name}`);
+          console.log(` ${chalk.cyan(`${currentAddress}:`)} ${light.name} ${chalk.grey(`(Hue ID: ${light.id})`)}`);
           currentAddress += 3;
         });
         console.log('\nArtNet node started (CTRL+C to quit)');
