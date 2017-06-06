@@ -1,3 +1,7 @@
+# 1.3.1
+
+- Fixed stuck colorloop effect
+
 # 1.3.0
 
 + Added lights mapping order customization
