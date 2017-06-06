@@ -1,3 +1,8 @@
+# 1.3.0
+
++ Added lights mapping order customization
++ Added colors to command-line output
+
 # 1.2.0
 
 + Added Art-Net universe option
