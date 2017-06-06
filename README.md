@@ -67,7 +67,7 @@ If you're looking for a nice cross-platform & open-source DMX software controlle
 
 If you need to define your lights order manually for the DMX mapping, edit your configuration file with a text editor
 (the file path is displayed at the end of `dmx-hue setup`) and add a new `lightsOrder` entry at the end like this:
-```json
+```js
 {
   ...
 	"lightsOrder": [1, 2, 3]  // Hue lights ID
