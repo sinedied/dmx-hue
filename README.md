@@ -70,7 +70,7 @@ If you need to define your lights order manually for the DMX mapping, edit your 
 ```js
 {
   ...
-	"lightsOrder": [1, 2, 3]  // Hue lights ID
+  "lightsOrder": [1, 2, 3]  // Hue lights ID
 }
 ```
 
