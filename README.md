@@ -63,6 +63,19 @@ favorite DMX controller! :bulb:
 If you're looking for a nice cross-platform & open-source DMX software controller, you should take a look at
 [QLC+](http://www.qlcplus.org/).
 
+#### Setting lights order
+
+If you need to define your lights order manually for the DMX mapping, edit your configuration file with a text editor
+(the file path is displayed at the end of `dmx-hue setup`) and add a new `lightsOrder` entry at the end like this:
+```json
+{
+  ...
+	"lightsOrder": [1, 2, 3]  // Hue lights ID
+}
+```
+
+The Hue lights IDs are displayed when `dmx-hue` is started.
+
 ### Hue lights specific features
 
 #### Colorloop

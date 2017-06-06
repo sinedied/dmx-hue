@@ -69,8 +69,15 @@ class DmxHue {
     this._hue
       .getLights()
       .then(lights => {
-        const disabled = Util.config.get('disabledLights') || {};
-        options.lights = lights.filter(light => !disabled[light.id]);
+        const ordered = options.order.reduce((r, id) => {
+          const light = lights.find(light => light.id === id.toString());
+          if (light && !options.disabled[id]) {
+            r.push(light);
+          }
+          return r;
+        }, []);
+        const remaining = lights.filter(light => !options.disabled[light.id] && !ordered.find(o => light.id === o.id));
+        options.lights = ordered.concat(remaining);
         options.transitionChannel = options.transition === 'channel';
         options.colors = {};
         const dmxChannelCount = (3 * options.lights.length) + (options.transitionChannel ? 1 : 0);
@@ -215,7 +222,7 @@ class DmxHue {
                 l[light.id] = true;
                 return l;
               }, {}));
-            console.log('Configuration saved.');
+            console.log(`Configuration saved at ${chalk.green(Util.config.path)}`);
           });
       });
   }
@@ -240,7 +247,9 @@ class DmxHue {
       colorloop: this._args.colorloop || Util.config.get('colorloop') || false,
       transition: this._args.transition || Util.config.get('transition') || 100,
       noLimit: this._args['no-limit'] || Util.config.get('noLimit') || false,
-      universe: this._args.universe || Util.config.get('universe') || 0
+      universe: this._args.universe || Util.config.get('universe') || 0,
+      disabled: Util.config.get('disabledLights') || {},
+      order: Util.config.get('lightsOrder') || []
     });
   }
 
