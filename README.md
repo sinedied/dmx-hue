@@ -99,7 +99,7 @@ This is especially noticeable when using automation sequences, if you try to upd
 the number of lights in your projects, some updates may be skipped. This is unfortunately a limitation with the Hue
 lights API and I cannot do anything about that.
 
-### Saftey rate limiting
+### Safety rate limiting
 
 By default, a safety rate limit is enforced so there is always a 0,1s interval between Hue API calls. You can disable
 this limit using the `--no-limit` option, but then you have to make sure to not make more than *number_of_lights / 10*
