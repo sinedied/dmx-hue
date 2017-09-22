@@ -42,13 +42,19 @@
     "node-hue-api": "^2.4.1"
   },
   "devDependencies": {
-    "eslint": "^3.17.0",
+    "eslint": "^4.7.2",
     "eslint-config-xo-space": "^0.16.0"
   },
   "engines": {
     "node": ">=6.0.0"
   },
   "eslintConfig": {
-    "extends": "xo-space/esnext"
+    "extends": "xo-space/esnext",
+    "rules": {
+      "no-multi-spaces": [
+        "error",
+        { "ignoreEOLComments": true }
+      ]
+    }
   }
 }
