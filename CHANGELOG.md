@@ -1,33 +1,28 @@
-# 1.3.1
+# 1.3.2
+- Allow to force bridge IP even if no bridges are detected
 
+# 1.3.1
 - Fixed stuck colorloop effect
 
 # 1.3.0
-
-+ Added lights mapping order customization
-+ Added colors to command-line output
+- Added lights mapping order customization
+- Added colors to command-line output
 
 # 1.2.0
-
-+ Added Art-Net universe option
+- Added Art-Net universe option
 - Fixed some bugs during setup
 
 # 1.1.2
-
 - Fixed docs
 
 # 1.1.1
-
 - Fixed DMX adresses starting at 0 instead of 1
 
 # 1.1.0
-
-+ Added option to disable safety rate limiting
+- Added option to disable safety rate limiting
 
 # 1.0.1
-
 - Fixed rate limiting issue
 
 # 1.0.0
-
 - Initial version
