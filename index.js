@@ -38,7 +38,6 @@ ${chalk.bold('Commands:')}
 `;
 
 class DmxHue {
-
   constructor(args) {
     this._args = minimist(args, {
       boolean: ['list', 'force', 'help', 'version', 'colorloop', 'no-limit'],
@@ -252,7 +251,6 @@ class DmxHue {
       order: Util.config.get('lightsOrder') || []
     });
   }
-
 }
 
 module.exports = DmxHue;
