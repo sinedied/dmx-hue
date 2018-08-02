@@ -1,4 +1,4 @@
-# :bulb: dmx-hue
+# :traffic_light: dmx-hue
 
 [![NPM version](https://img.shields.io/npm/v/dmx-hue.svg)](https://www.npmjs.com/package/dmx-hue)
 [![Build status](https://img.shields.io/travis/sinedied/dmx-hue/master.svg)](https://travis-ci.org/sinedied/dmx-hue)
