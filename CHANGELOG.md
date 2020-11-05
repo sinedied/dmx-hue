@@ -1,3 +1,6 @@
+# 1.4.0
+- Add lights update order randomization (PR #17)
+
 # 1.3.2
 - Allow to force bridge IP even if no bridges are detected
 
