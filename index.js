@@ -130,12 +130,16 @@ class DmxHue {
 
     const dmx = dmxData.slice(address, address + (3 * options.lights.length));
     let j = 0;
+    const length = options.lights.length;
+    let indices = Array.from({length}, (_, i) => i);
+    indices = this._shuffle(indices);
 
-    for (let i = 0; i < options.lights.length; i++) {
+    let i;
+    for (i of indices) {
       const lightId = options.lights[i].id;
+      j = i * 3;
       const color = dmx.slice(j, j + 3);
       const previous = options.colors[lightId];
-      j += 3;
 
       // Update light only if color changed
       if (!previous || color[0] !== previous[0] || color[1] !== previous[1] || color[2] !== previous[2]) {
@@ -224,6 +228,26 @@ class DmxHue {
             console.log(`Configuration saved at ${chalk.green(Util.config.path)}`);
           });
       });
+  }
+
+  _shuffle(array) {
+    let currentIndex = array.length;
+    let temporaryValue;
+    let randomIndex;
+
+    // While there remain elements to shuffle...
+    while (currentIndex !== 0) {
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+
+    return array;
   }
 
   run() {
