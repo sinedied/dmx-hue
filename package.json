@@ -53,7 +53,9 @@
     "rules": {
       "no-multi-spaces": [
         "error",
-        { "ignoreEOLComments": true }
+        {
+          "ignoreEOLComments": true
+        }
       ]
     }
   }
