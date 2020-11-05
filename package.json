@@ -12,7 +12,7 @@
   },
   "scripts": {
     "test": "eslint *.js lib/*.js",
-    "postpublish": "git tag -a $npm_package_version -m '$npm_package_version' && git push --tags"
+    "postpublish": "git tag -a $npm_package_version -m \"$npm_package_version\" && git push --tags"
   },
   "keywords": [
     "philips",
