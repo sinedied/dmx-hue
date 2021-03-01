@@ -1,8 +1,8 @@
 # :traffic_light: dmx-hue
 
 [![NPM version](https://img.shields.io/npm/v/dmx-hue.svg)](https://www.npmjs.com/package/dmx-hue)
-[![Build status](https://img.shields.io/travis/sinedied/dmx-hue/master.svg)](https://travis-ci.org/sinedied/dmx-hue)
-![Node version](https://img.shields.io/badge/node-%3E%3D6.0.0-brightgreen.svg)
+[![Build Status](https://github.com/sinedied/dmx-hue/workflows/build/badge.svg)](https://github.com/sinedied/dmx-hue/actions)
+![Node version](https://img.shields.io/node/v/dmx-hue.svg)
 [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
