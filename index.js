@@ -181,7 +181,7 @@ class DmxHue {
               name: 'universe',
               message: 'Set Art-Net universe',
               default: Util.config.get('universe') || 0,
-              validate: input => parseInt(input, 10) > 0
+              validate: input => parseInt(input, 10) >= 0
             },
             {
               type: 'confirm',
