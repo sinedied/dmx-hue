@@ -1,0 +1,23 @@
+name: release
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [release]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 14
+    - run: npm ci
+      env:
+        CI: true
+    - run: npx semantic-release
+      if: success()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
