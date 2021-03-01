@@ -2,6 +2,7 @@
   "name": "dmx-hue",
   "version": "1.4.1",
   "description": "Art-Net node to control Philips Hue lights with DMX",
+  "preferGlobal": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/sinedied/dmx-hue.git"
@@ -12,7 +13,7 @@
   },
   "scripts": {
     "test": "eslint *.js lib/*.js",
-    "postpublish": "git tag -a $npm_package_version -m \"$npm_package_version\" && git push --tags"
+    "release:check": "semantic-release --dry-run"
   },
   "keywords": [
     "philips",
@@ -27,7 +28,10 @@
     "show",
     "bridge"
   ],
-  "author": "Yohan Lasorsa",
+  "author": {
+    "name": "Yohan Lasorsa",
+    "url": "https://twitter.com/sinedied"
+  },
   "license": "MIT",
   "homepage": "https://github.com/sinedied/dmx-hue",
   "bugs": {
@@ -43,7 +47,9 @@
   },
   "devDependencies": {
     "eslint": "^4.7.2",
-    "eslint-config-xo-space": "^0.16.0"
+    "eslint-config-xo-space": "^0.16.0",
+    "semantic-release": "^17.4.0",
+    "semantic-release-npm-github": "^1.0.4"
   },
   "engines": {
     "node": ">=6.0.0"
@@ -58,6 +64,10 @@
         }
       ]
     }
+  },
+  "release": {
+    "extends": "semantic-release-npm-github",
+    "branches": "main"
   },
   "files": [
     "bin",
