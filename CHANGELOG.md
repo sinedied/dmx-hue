@@ -1,3 +1,6 @@
+# 1.4.1
+- Fix artnet universe 0 not being accepted during setup (PR #21)
+
 # 1.4.0
 - Add lights update order randomization (PR #17)
 
