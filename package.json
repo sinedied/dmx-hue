@@ -1,6 +1,6 @@
 {
   "name": "dmx-hue",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Art-Net node to control Philips Hue lights with DMX",
   "preferGlobal": true,
   "repository": {
