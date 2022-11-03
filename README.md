@@ -91,8 +91,7 @@ want to go creative and be able to adjust transition times dynamically, you can 
 
 #### White control
 
-While channels 1-3 (per fixture) are used for RGB mixing, channel 4 will be used as a white balance mode. When channels 1-3 (RGB) are 0, white mode will be enabled and 4 will control temperature, while 5 will control brightness. If RGB is being used, brightness (channel 5) will be disabled. 
-
+Channel 4-5 for each fixture are reserved for white control. When R/G/B channels are at value '0', channel 4 will control temperature, and channel 5 will control brightness. Brightness is currently overriden by R/G/B channels.
 ## Philips Hue response times vs DMX
 
 With the Philips Hue API it’s only possible to update the state of bulbs 10 times per second, 1 bulb at a time.
