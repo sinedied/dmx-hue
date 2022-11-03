@@ -89,6 +89,10 @@ Hue light can automatically perform transitions from one state to another in a s
 useful since there is a somewhat low update rate limitation on Hue lights (see next section for more details). If you
 want to go creative and be able to adjust transition times dynamically, you can dedicate a DMX channel for it.
 
+#### White control
+
+While channels 1-3 (per fixture) are used for RGB mixing, channel 4 will be used as a white balance mode. When channels 1-3 (RGB) are 0, white mode will be enabled and 4 will control temperature, while 5 will control brightness. If RGB is being used, brightness (channel 5) will be disabled. 
+
 ## Philips Hue response times vs DMX
 
 With the Philips Hue API it’s only possible to update the state of bulbs 10 times per second, 1 bulb at a time.
