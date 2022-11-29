@@ -16,7 +16,7 @@ const pkg = require('./package.json');
 6=huestate temp
 Note: this could be optimized. Not all lights need 6 channels. huestate temp lights only need 3
 */
-const number_of_channels = 6;
+const number_of_channels = 3;
 
 const help =
 `${chalk.bold('Usage:')} dmx-hue [setup] [options]
@@ -152,11 +152,11 @@ class DmxHue {
       const previous = options.huestates[lightId];
 
       // Update light only if huestate changed
-      if (!previous || huestate[0] !== previous[0] || huestate[1] !== previous[1] || huestate[2] !== previous[2] || huestate[3] !== previous[3] || huestate[4] !== previous[4] || huestate[5] !== previous[5]) {
+      if (!previous || huestate[0] !== previous[0] || huestate[1] !== previous[1] || huestate[2] !== previous[2] /*|| huestate[3] !== previous[3] || huestate[4] !== previous[4] || huestate[5] !== previous[5]*/) {
         // Rate limit Hue API to 0,1s between calls
         const now = new Date().getTime();
         if (options.noLimit || now - this._lastUpdate >= 100) {
-          const state = this._hue.createLightState(huestate[0], huestate[1], huestate[2], huestate[3], huestate[4], huestate[5], options);
+          const state = this._hue.createLightState(huestate[0], huestate[1], huestate[2]/*, huestate[3], huestate[4], huestate[5]*/, options);
           this._lastUpdate = now;
           this._hue.setLight(lightId, state);
           options.huestates[lightId] = huestate;
