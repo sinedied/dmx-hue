@@ -7,6 +7,15 @@ const Util = require('./lib/util');
 const Hue = require('./lib/hue');
 const ArtNet = require('./lib/artnet');
 const pkg = require('./package.json');
+/*number of channels 
+1=red
+2=green
+3=blue
+4=brightness
+5=colour temp
+Note: this could be optimized. Not all lights need 5 channels. huestate temp lights only need 2 (bri and ct)
+*/
+const number_of_channels = 5;
 
 const help =
 `${chalk.bold('Usage:')} dmx-hue [setup] [options]
@@ -20,9 +29,9 @@ ${chalk.bold('Options:')}
   -t, --transition Set transition time in ms              [default: 100]
                    Can also be set to 'channel' to enable a dedicated DMX
                    channel on which 1 step equals 100ms.
-  -c, --colorloop  Enable colorloop feature
+  -c, --huestateloop  Enable huestateloop feature
                    When enabled, setting all RGB channels of a light to 1 will
-                   enable colorloop mode.
+                   enable huestateloop mode.
   -n, --no-limit   Disable safety rate limiting
                    Warning: when this option is enabled, make sure to not send
                    more than <number_of_lights>/10 updates per second, or you
@@ -40,7 +49,7 @@ ${chalk.bold('Commands:')}
 class DmxHue {
   constructor(args) {
     this._args = minimist(args, {
-      boolean: ['list', 'force', 'help', 'version', 'colorloop', 'no-limit'],
+      boolean: ['list', 'force', 'help', 'version', 'huestateloop', 'no-limit'],
       string: ['ip', 'host', 'transition'],
       number: ['address', 'universe'],
       alias: {
@@ -49,7 +58,7 @@ class DmxHue {
         h: 'host',
         a: 'address',
         t: 'transition',
-        c: 'colorloop',
+        c: 'huestateloop',
         n: 'no-limit',
         u: 'universe'
       }
@@ -78,13 +87,13 @@ class DmxHue {
         const remaining = lights.filter(light => !options.disabled[light.id] && !ordered.find(o => light.id === o.id));
         options.lights = ordered.concat(remaining);
         options.transitionChannel = options.transition === 'channel';
-        options.colors = {};
-        const dmxChannelCount = (3 * options.lights.length) + (options.transitionChannel ? 1 : 0);
+        options.huestates = {};
+        const dmxChannelCount = (number_of_channels * options.lights.length) + (options.transitionChannel ? 1 : 0);
         const extraDmxAddress = options.address + dmxChannelCount - 512;
 
         if (extraDmxAddress >= 0) {
           console.warn(chalk.yellow('Warning: not enough DMX channels, some lights will be unavailable'));
-          const lightsToRemove = Math.ceil(extraDmxAddress / 3.0);
+          const lightsToRemove = Math.ceil(extraDmxAddress / number_of_channels);
           options.lights = options.lights.slice(0, -lightsToRemove);
         }
 
@@ -104,8 +113,8 @@ class DmxHue {
           console.log(` ${currentAddress++}: transition time`);
         }
         options.lights.forEach(light => {
-          console.log(` ${chalk.cyan(`${currentAddress}:`)} ${light.name} ${chalk.grey(`(Hue ID: ${light.id})`)}`);
-          currentAddress += 3;
+          console.log(` ${chalk.cyan(`${currentAddress}:`)} ${light.name} ${chalk.grey(`(Hue ID: ${light.id})`)} ${light.type}`);
+          currentAddress += number_of_channels;
         });
         console.log('\nArtNet node started (CTRL+C to quit)');
       });
@@ -128,7 +137,7 @@ class DmxHue {
       address++;
     }
 
-    const dmx = dmxData.slice(address, address + (3 * options.lights.length));
+    const dmx = dmxData.slice(address, address + (number_of_channels * options.lights.length));
     let j = 0;
     const length = options.lights.length;
     let indices = Array.from({length}, (_, i) => i);
@@ -137,24 +146,40 @@ class DmxHue {
     let i;
     for (i of indices) {
       const lightId = options.lights[i].id;
-      j = i * 3;
-      const color = dmx.slice(j, j + 3);
-      const previous = options.colors[lightId];
+      j = i * number_of_channels;
+      const huestate = dmx.slice(j, j + number_of_channels);
+      const previous = options.huestates[lightId];
 
-      // Update light only if color changed
-      if (!previous || color[0] !== previous[0] || color[1] !== previous[1] || color[2] !== previous[2]) {
+      // Update light only if rgb huestate changed
+      if (!previous || huestate[0] !== previous[0] || huestate[1] !== previous[1] || huestate[2] !== previous[2]) {
         // Rate limit Hue API to 0,1s between calls
         const now = new Date().getTime();
         if (options.noLimit || now - this._lastUpdate >= 100) {
-          const state = this._hue.createLightState(color[0], color[1], color[2], options);
+          const state = this._hue.createLightState(huestate[0], huestate[1], huestate[2], options);
           this._lastUpdate = now;
           this._hue.setLight(lightId, state);
-          options.colors[lightId] = color;
+          options.huestates[lightId] = huestate;
         } else if (!this._delayedUpdate) {
           // Make sure to apply update later if changes could not be applied
           this._delayedUpdate = setTimeout(() => this._updateLights(dmxData, options), 100);
         }
       }
+
+      // Update light only if bri, sat or ct huestate changed
+      if (previous && (huestate[3] !== previous[3] || huestate[4] !== previous[4])) {
+        // Rate limit Hue API to 0,1s between calls
+        const now = new Date().getTime();
+        if (options.noLimit || now - this._lastUpdate >= 100) {
+          const state = this._hue.createctLightState(huestate[3], huestate[4], options);
+          this._lastUpdate = now;
+          this._hue.setLight(lightId, state);
+          options.huestates[lightId] = huestate;
+        } else if (!this._delayedUpdate) {
+          // Make sure to apply update later if changes could not be applied
+          this._delayedUpdate = setTimeout(() => this._updateLights(dmxData, options), 100);
+        }
+      }
+      
     }
   }
 
@@ -185,9 +210,9 @@ class DmxHue {
             },
             {
               type: 'confirm',
-              name: 'colorloop',
-              message: 'Enable colorloop feature',
-              default: Util.config.get('colorloop') || false
+              name: 'huestateloop',
+              message: 'Enable huestateloop feature',
+              default: Util.config.get('huestateloop') || false
             },
             {
               type: 'confirm',
@@ -217,7 +242,7 @@ class DmxHue {
           .then(answers => {
             Util.config.set('dmxAddress', parseInt(answers.dmxAddress, 10));
             Util.config.set('universe', parseInt(answers.universe, 10));
-            Util.config.set('colorloop', answers.colorloop);
+            Util.config.set('huestateloop', answers.huestateloop);
             Util.config.set('transition', answers.transitionChannel ? 'channel' : parseInt(answers.transition, 10));
             Util.config.set('disabledLights', lights
               .filter(light => !answers.lights.includes(light.id))
@@ -267,7 +292,7 @@ class DmxHue {
     return this.start({
       host: this._args.host,
       address: this._args.address || Util.config.get('dmxAddress') || 1,
-      colorloop: this._args.colorloop || Util.config.get('colorloop') || false,
+      huestateloop: this._args.huestateloop || Util.config.get('huestateloop') || false,
       transition: this._args.transition || Util.config.get('transition') || 100,
       noLimit: this._args['no-limit'] || Util.config.get('noLimit') || false,
       universe: this._args.universe || Util.config.get('universe') || 0,
