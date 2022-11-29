@@ -167,7 +167,7 @@ class DmxHue {
       }
 
       // Update light only if bri, sat or ct huestate changed
-      if (!previous || huestate[3] !== previous[3] || huestate[4] !== previous[4] || huestate[5] !== previous[5]) {
+      if (huestate[3] !== previous[3] || huestate[4] !== previous[4] || huestate[5] !== previous[5]) {
         // Rate limit Hue API to 0,1s between calls
         const now = new Date().getTime();
         if (options.noLimit || now - this._lastUpdate >= 100) {
