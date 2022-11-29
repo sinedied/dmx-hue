@@ -79,12 +79,12 @@ The Hue lights IDs are displayed when `dmx-hue` is started.
 ### Hue lights specific features
 
 #### Supported Hue light states 
-Each light has 5 channels
-1=Red (0-255) 
-2=Green (0-255) 
-3=Blue (0-255) 
-4=Brightness (0-255) 0=off 
-5=ColorTemp (77-250) ct value range for Philips Hue lights is 153-500. 8bit ColorTemp value multipled by 2 to convert 
+Each light has 5 channels  
+1=Red (0-255)  
+2=Green (0-255)   
+3=Blue (0-255)  
+4=Brightness (0-255) 0=off  
+5=ColorTemp (77-250) ct value range for Philips Hue lights is 153-500. 8bit ColorTemp value multipled by 2 to convert  
 
 #### Colorloop
 
