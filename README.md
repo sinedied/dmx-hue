@@ -10,6 +10,8 @@
 
 > Art-Net node to control Philips Hue lights with DMX
 
+This updated version of DMX-HUE supports 5 channels per light allowing you to control the brightnes and colour temperature. This was primarily implemented to allow control of Philips Hue lights from DragonFrame stopmotion animation software. 
+
 ## Installation
 
 Install [NodeJS](https://nodejs.org), then open a command prompt:
@@ -112,3 +114,72 @@ lights API and I cannot do anything about that.
 By default, a safety rate limit is enforced so there is always a 0,1s interval between Hue API calls. You can disable
 this limit using the `--no-limit` option, but then you have to make sure to not make more than *number_of_lights / 10*
 DMX value changes per second, or your Hue bridge might get overloaded.
+
+### Integration with DragonFrame
+The easiest way to use dmx-hue with DragonFrame is to run nodejs on the local machine running DragonFrame. On Windows follow these steps:  
+* Install Nodejs for Windows from the official Web site: https://nodejs.org/en/download/
+* Get the node package from GitHub using npm:  
+```bash
+npm install -g davpeet/dmx-hue
+```
+* Configure dmx-hue by pressing the button on the Hue bridge and running:  
+```bash
+node dmx-hue setup --ip <IP Address of Hue bridge>
+```
+* Configure DMX-HUE and the lights you want to use in DragonFrame in the setup:
+```
+Bridge configured at 192.168.1.101
+? Set DMX address (range 1-511) 1
+? Set Art-Net universe 0
+? Enable huestateloop feature No
+? Use DMX channel for transition time No
+? Set transition time in ms 1
+? Choose lights to use (Press <space> to select, <a> to toggle all, <i> to inverse selection)
+ (*) Studio spot 1
+ (*) Studio spot 2
+ ( ) Stair light1
+>( ) Pantry light
+ ( ) Vitrine
+ ( ) Christmas star
+ ( ) Christmas lights
+```
+> [NOTE:]  
+Earlier versions of DragonFrame communicate with ArcNet using an offset Universe Number i.e. dmx-hue configure on universe 0, DragonFrame configured with universe 1  
+>
+
+* Start dmx-hue:  
+```  
+c:\users\joe\node_modules\dmx-hue\bin>node dmx-hue  
+
+DMX addresses on universe 0:
+ 1: Studio spot 1 (Hue ID: 33) Color temperature light
+ 6: Studio spot 2 (Hue ID: 34) Color temperature light
+
+ArtNet node started (CTRL+C to quit)
+```
+* Start DragonFrame
+* Open a scene and then select scene->connections  
+
+![Scene->Connections menu](images/DFConnections.png)
+
+* Add a new ArtNet connection on 127.0.0.1:0 (localhost ArtNet Universe 0)  
+
+![Scene->Connections menu](images/DFScene_connection.png)
+
+* Open the DMX Window Crtl+Alt+4  
+
+![Scene->Connections menu](images/DFDMXWindows.png)
+
+* Add new Fixtures: Generic | RGBWW Fader:  
+
+![Add Fixture Generic RGBWW Fader](images/GenericRGBWW.png)
+
+ * Once fixtures have been added select all fixtures. Right click and select Direct DMX Mode 0-255.  
+
+![Add Fixture Generic RGBWW Fader](images/DirectDMX%20Mode.png)
+
+* You can now control your Philips Hue lights from DragonFrame and use KeyFrames to implement transitions
+
+Have fun animating with DragonFrame and DMX-HUE
+
+Many thanks to [Yohan Lasorsa](https://github.com/sinedied) who created DMX-HUE
