@@ -160,23 +160,23 @@ ArtNet node started (CTRL+C to quit)
 * Start DragonFrame
 * Open a scene and then select scene->connections  
 
-![Scene->Connections menu](images/DFConnections.png)
+![Scene->Connections menu](DFConnections.png)
 
 * Add a new ArtNet connection on 127.0.0.1:0 (localhost ArtNet Universe 0)  
 
-![Scene->Connections menu](images/DFScene_connection.png)
+![Scene->Connections menu](DFScene_connection.png)
 
 * Open the DMX Window Crtl+Alt+4  
 
-![Scene->Connections menu](images/DFDMXWindows.png)
+![Scene->Connections menu](DFDMXWindows.png)
 
 * Add new Fixtures: Generic | RGBWW Fader:  
 
-![Add Fixture Generic RGBWW Fader](images/GenericRGBWW.png)
+![Add Fixture Generic RGBWW Fader](GenericRGBWW.png)
 
  * Once fixtures have been added select all fixtures. Right click and select Direct DMX Mode 0-255.  
 
-![Add Fixture Generic RGBWW Fader](images/DirectDMX%20Mode.png)
+![Add Fixture Generic RGBWW Fader](DirectDMX%20Mode.png)
 
 * You can now control your Philips Hue lights from DragonFrame and use KeyFrames to implement transitions
 
