@@ -1,7 +1,7 @@
 # :traffic_light: dmx-hue
 
 [![NPM version](https://img.shields.io/npm/v/dmx-hue.svg)](https://www.npmjs.com/package/dmx-hue)
-[![Build Status](https://github.com/sinedied/dmx-hue/workflows/build/badge.svg)](https://github.com/sinedied/dmx-hue/actions)
+[![Build Status](https://github.com/davpeet/dmx-hue/workflows/build/badge.svg)](https://github.com/davpeet/dmx-hue/actions)
 ![Node version](https://img.shields.io/node/v/dmx-hue.svg)
 [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -182,4 +182,4 @@ ArtNet node started (CTRL+C to quit)
 
 Have fun animating with DragonFrame and DMX-HUE
 
-Many thanks to [Yohan Lasorsa](https://github.com/sinedied) who created DMX-HUE
+Many thanks to [Yohan Lasorsa](https://github.com/davpeet) who created DMX-HUE

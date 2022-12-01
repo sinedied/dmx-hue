@@ -1,9 +1,9 @@
-## [1.4.2](https://github.com/sinedied/dmx-hue/compare/1.4.1...1.4.2) (2021-07-06)
+## [1.4.2](https://github.com/davpeet/dmx-hue/compare/1.4.1...1.4.2) (2021-07-06)
 
 
 ### Bug Fixes
 
-* correct hue-dmx to dmx-hue ([373e81c](https://github.com/sinedied/dmx-hue/commit/373e81c8c9a02848acfe3b6069072fa788fd023a))
+* correct hue-dmx to dmx-hue ([373e81c](https://github.com/davpeet/dmx-hue/commit/373e81c8c9a02848acfe3b6069072fa788fd023a))
 
 # 1.4.1
 - Fix artnet universe 0 not being accepted during setup (PR #21)

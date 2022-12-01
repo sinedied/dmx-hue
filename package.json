@@ -5,7 +5,7 @@
   "preferGlobal": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/sinedied/dmx-hue.git"
+    "url": "https://github.com/davpeet/dmx-hue.git"
   },
   "main": "index.js",
   "bin": {
@@ -33,9 +33,9 @@
     "url": "https://twitter.com/sinedied"
   },
   "license": "MIT",
-  "homepage": "https://github.com/sinedied/dmx-hue",
+  "homepage": "https://github.com/davpeet/dmx-hue",
   "bugs": {
-    "url": "https://github.com/sinedied/dmx-hue/issues"
+    "url": "https://github.com/davpeet/dmx-hue/issues"
   },
   "dependencies": {
     "chalk": "^1.1.3",
