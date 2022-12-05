@@ -17,7 +17,7 @@ This updated version of DMX-HUE supports 5 channels per light allowing you to co
 Install [NodeJS](https://nodejs.org), then open a command prompt:
 
 ```bash
-npm install -g davpeet/dmx-hue
+npm install -g dmx-hue
 ```
 
 ## Usage
