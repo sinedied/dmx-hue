@@ -111,3 +111,14 @@ lights API and I cannot do anything about that.
 By default, a safety rate limit is enforced so there is always a 0,1s interval between Hue API calls. You can disable
 this limit using the `--no-limit` option, but then you have to make sure to not make more than *number_of_lights / 10*
 DMX value changes per second, or your Hue bridge might get overloaded.
+
+## Development
+
+To run the project without installing, clone the repository and run the following commands from the folder:
+
+```bash
+npm install
+npm start
+```
+
+Changes you make to the source will be immediately available when you run in this way.
