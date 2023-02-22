@@ -42,14 +42,14 @@
     "color": "^1.0.3",
     "conf": "^1.1.0",
     "inquirer": "^3.0.6",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.8",
     "node-hue-api": "^2.4.1"
   },
   "devDependencies": {
     "eslint": "^4.7.2",
     "eslint-config-xo-space": "^0.16.0",
-    "semantic-release": "^17.4.0",
-    "semantic-release-npm-github": "^1.0.4"
+    "semantic-release": "^20.1.0",
+    "semantic-release-npm-github": "^3.0.0"
   },
   "engines": {
     "node": ">=6.0.0"
