@@ -2,17 +2,20 @@
   "name": "dmx-hue",
   "version": "1.4.2",
   "description": "Art-Net node to control Philips Hue lights with DMX",
+  "type": "module",
   "preferGlobal": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/sinedied/dmx-hue.git"
   },
-  "main": "index.js",
+  "exports": "./index.js",
   "bin": {
-    "dmx-hue": "./bin/dmx-hue"
+    "dmx-hue": "./bin/dmx-hue.js"
   },
   "scripts": {
-    "test": "eslint *.js lib/*.js",
+    "lint": "xo",
+    "lint:fix": "xo --fix",
+    "test": "xo",
     "release:check": "semantic-release --dry-run"
   },
   "keywords": [
@@ -46,23 +49,29 @@
     "node-hue-api": "^2.4.1"
   },
   "devDependencies": {
-    "eslint": "^4.7.2",
-    "eslint-config-xo-space": "^0.16.0",
     "semantic-release": "^20.1.0",
-    "semantic-release-npm-github": "^3.0.0"
+    "semantic-release-npm-github": "^3.0.0",
+    "xo": "^0.53.1"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=16.0.0"
   },
-  "eslintConfig": {
-    "extends": "xo-space/esnext",
+  "prettier": {
+    "trailingComma": "none",
+    "bracketSpacing": true
+  },
+  "xo": {
+    "space": true,
+    "prettier": true,
+    "envs": [
+      "node"
+    ],
     "rules": {
-      "no-multi-spaces": [
-        "error",
-        {
-          "ignoreEOLComments": true
-        }
-      ]
+      "unicorn/no-process-exit": "off",
+      "max-params": "off",
+      "no-throw-literal": "off",
+      "unicorn/no-array-reduce": "off",
+      "complexity": "off"
     }
   },
   "release": {

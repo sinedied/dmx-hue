@@ -1,15 +1,16 @@
-'use strict';
+import fs from 'node:fs';
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import minimist from 'minimist';
+import inquirer from 'inquirer';
+import chalk from 'chalk';
+import Util from './lib/util.js';
+import Hue from './lib/hue.js';
+import ArtNet from './lib/artnet.js';
 
-const minimist = require('minimist');
-const inquirer = require('inquirer');
-const chalk = require('chalk');
-const Util = require('./lib/util');
-const Hue = require('./lib/hue');
-const ArtNet = require('./lib/artnet');
-const pkg = require('./package.json');
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const help =
-`${chalk.bold('Usage:')} dmx-hue [setup] [options]
+const help = `${chalk.bold('Usage:')} dmx-hue [setup] [options]
 
 Create an ArtNet DMX<>Hue bridge.
 
@@ -38,10 +39,18 @@ ${chalk.bold('Commands:')}
     --force        Force bridge setup if already configured
 `;
 
-class DmxHue {
+export class DmxHue {
   constructor(args) {
     this._args = minimist(args, {
-      boolean: ['list', 'force', 'help', 'version', 'colorloop', 'white', 'no-limit'],
+      boolean: [
+        'list',
+        'force',
+        'help',
+        'version',
+        'colorloop',
+        'white',
+        'no-limit'
+      ],
       string: ['ip', 'host', 'transition'],
       number: ['address', 'universe'],
       alias: {
@@ -66,33 +75,46 @@ class DmxHue {
       Util.exit('Invalid DMX address');
     }
 
-    options = Object.assign({}, options);
+    options = { ...options };
     const dmxChannelsPerFixture = options.white ? 5 : 3;
 
     this._hue
       .getLights()
-      .then(lights => {
+      .then((lights) => {
         const ordered = options.order.reduce((r, id) => {
-          const light = lights.find(light => light.id === id.toString());
+          const light = lights.find((light) => light.id === id.toString());
           if (light && !options.disabled[id]) {
             r.push(light);
           }
+
           return r;
         }, []);
-        const remaining = lights.filter(light => !options.disabled[light.id] && !ordered.find(o => light.id === o.id));
-        options.lights = ordered.concat(remaining);
+        const remaining = lights.filter(
+          (light) =>
+            !options.disabled[light.id] &&
+            !ordered.some((o) => light.id === o.id)
+        );
+        options.lights = [...ordered, ...remaining];
         options.transitionChannel = options.transition === 'channel';
         options.colors = {};
-        const dmxChannelCount = (dmxChannelsPerFixture * options.lights.length) + (options.transitionChannel ? 1 : 0);
+        const dmxChannelCount =
+          dmxChannelsPerFixture * options.lights.length +
+          (options.transitionChannel ? 1 : 0);
         const extraDmxAddress = options.address + dmxChannelCount - 512;
 
         if (extraDmxAddress >= 0) {
-          console.warn(chalk.yellow('Warning: not enough DMX channels, some lights will be unavailable'));
-          const lightsToRemove = Math.ceil(extraDmxAddress / dmxChannelsPerFixture);
+          console.warn(
+            chalk.yellow(
+              'Warning: not enough DMX channels, some lights will be unavailable'
+            )
+          );
+          const lightsToRemove = Math.ceil(
+            extraDmxAddress / dmxChannelsPerFixture
+          );
           options.lights = options.lights.slice(0, -lightsToRemove);
         }
 
-        return ArtNet.listen(options.host, data => {
+        return ArtNet.listen(options.host, (data) => {
           if (data.universe === options.universe) {
             this._updateLights(data.dmx, options);
           }
@@ -101,16 +123,27 @@ class DmxHue {
       .then(() => {
         let currentAddress = options.address;
         if (options.noLimit) {
-          console.warn(chalk.yellow('Warning, safety rate limiting is disabled!\n'));
+          console.warn(
+            chalk.yellow('Warning, safety rate limiting is disabled!\n')
+          );
         }
-        console.log(chalk.bold(`DMX addresses on universe ${options.universe}:`));
+
+        console.log(
+          chalk.bold(`DMX addresses on universe ${options.universe}:`)
+        );
         if (options.transitionChannel) {
           console.log(` ${currentAddress++}: transition time`);
         }
-        options.lights.forEach(light => {
-          console.log(` ${chalk.cyan(`${currentAddress}:`)} ${light.name} ${chalk.grey(`(Hue ID: ${light.id})`)}`);
+
+        for (const light of options.lights) {
+          console.log(
+            ` ${chalk.cyan(`${currentAddress}:`)} ${light.name} ${chalk.grey(
+              `(Hue ID: ${light.id})`
+            )}`
+          );
           currentAddress += dmxChannelsPerFixture;
-        });
+        }
+
         console.log('\nArtNet node started (CTRL+C to quit)');
       });
   }
@@ -147,10 +180,13 @@ class DmxHue {
     }
 
     const dmxChannelsPerFixture = options.white ? 5 : 3;
-    const dmx = dmxData.slice(address, address + (dmxChannelsPerFixture * options.lights.length));
+    const dmx = dmxData.slice(
+      address,
+      address + dmxChannelsPerFixture * options.lights.length
+    );
     let j = 0;
-    const length = options.lights.length;
-    let indices = Array.from({length}, (_, i) => i);
+    const { length } = options.lights;
+    let indices = Array.from({ length }, (_, i) => i);
     indices = this._shuffle(indices);
 
     let i;
@@ -163,17 +199,34 @@ class DmxHue {
       // Update light only if color changed
       if (this._hasColorChanged(previous, color, dmxChannelsPerFixture)) {
         // Rate limit Hue API to 0,1s between calls
-        const now = new Date().getTime();
+        const now = Date.now();
         if (options.noLimit || now - this._lastUpdate >= 100) {
-          const state = options.white ? 
-            this._hue.createLightState(color[0], color[1], color[2], color[3], color[4], options) :
-            this._hue.createLightState(color[0], color[1], color[2], undefined, undefined, options);
+          const state = options.white
+            ? this._hue.createLightState(
+                color[0],
+                color[1],
+                color[2],
+                color[3],
+                color[4],
+                options
+              )
+            : this._hue.createLightState(
+                color[0],
+                color[1],
+                color[2],
+                undefined,
+                undefined,
+                options
+              );
           this._lastUpdate = now;
           this._hue.setLight(lightId, state);
           options.colors[lightId] = color;
         } else if (!this._delayedUpdate) {
           // Make sure to apply update later if changes could not be applied
-          this._delayedUpdate = setTimeout(() => this._updateLights(dmxData, options), 100);
+          this._delayedUpdate = setTimeout(
+            () => this._updateLights(dmxData, options),
+            100
+          );
         }
       }
     }
@@ -182,73 +235,84 @@ class DmxHue {
   _setupOptions() {
     const disabled = Util.config.get('disabledLights') || {};
     const transition = Util.config.get('transition') || 0;
-    this._hue
-      .getLights()
-      .then(lights => {
-        return inquirer
-          .prompt([
-            {
-              type: 'input',
-              name: 'dmxAddress',
-              message: 'Set DMX address (range 1-511)',
-              default: Util.config.get('dmxAddress') || 1,
-              validate: input => {
-                const value = parseInt(input, 10);
-                return value > 0 && value <= 511;
-              }
-            },
-            {
-              type: 'input',
-              name: 'universe',
-              message: 'Set Art-Net universe',
-              default: Util.config.get('universe') || 0,
-              validate: input => parseInt(input, 10) >= 0
-            },
-            {
-              type: 'confirm',
-              name: 'colorloop',
-              message: 'Enable colorloop feature',
-              default: Util.config.get('colorloop') || false
-            },
-            {
-              type: 'confirm',
-              name: 'transitionChannel',
-              message: 'Use DMX channel for transition time',
-              default: transition === 'channel'
-            },
-            {
-              type: 'input',
-              name: 'transition',
-              message: 'Set transition time in ms',
-              default: transition === 'channel' ? 100 : transition,
-              when: answers => !answers.transitionChannel,
-              validate: input => parseInt(input, 10) > 0
-            },
-            {
-              type: 'checkbox',
-              name: 'lights',
-              message: 'Choose lights to use',
-              choices: lights.map(light => ({
-                name: light.name,
-                value: light.id,
-                checked: !disabled[light.id]
-              }))
+    this._hue.getLights().then((lights) => {
+      return inquirer
+        .prompt([
+          {
+            type: 'input',
+            name: 'dmxAddress',
+            message: 'Set DMX address (range 1-511)',
+            default: Util.config.get('dmxAddress') || 1,
+            validate(input) {
+              const value = Number.parseInt(input, 10);
+              return value > 0 && value <= 511;
             }
-          ])
-          .then(answers => {
-            Util.config.set('dmxAddress', parseInt(answers.dmxAddress, 10));
-            Util.config.set('universe', parseInt(answers.universe, 10));
-            Util.config.set('colorloop', answers.colorloop);
-            Util.config.set('transition', answers.transitionChannel ? 'channel' : parseInt(answers.transition, 10));
-            Util.config.set('disabledLights', lights
-              .filter(light => !answers.lights.includes(light.id))
+          },
+          {
+            type: 'input',
+            name: 'universe',
+            message: 'Set Art-Net universe',
+            default: Util.config.get('universe') || 0,
+            validate: (input) => Number.parseInt(input, 10) >= 0
+          },
+          {
+            type: 'confirm',
+            name: 'colorloop',
+            message: 'Enable colorloop feature',
+            default: Util.config.get('colorloop') || false
+          },
+          {
+            type: 'confirm',
+            name: 'transitionChannel',
+            message: 'Use DMX channel for transition time',
+            default: transition === 'channel'
+          },
+          {
+            type: 'input',
+            name: 'transition',
+            message: 'Set transition time in ms',
+            default: transition === 'channel' ? 100 : transition,
+            when: (answers) => !answers.transitionChannel,
+            validate: (input) => Number.parseInt(input, 10) > 0
+          },
+          {
+            type: 'checkbox',
+            name: 'lights',
+            message: 'Choose lights to use',
+            choices: lights.map((light) => ({
+              name: light.name,
+              value: light.id,
+              checked: !disabled[light.id]
+            }))
+          }
+        ])
+        .then((answers) => {
+          Util.config.set(
+            'dmxAddress',
+            Number.parseInt(answers.dmxAddress, 10)
+          );
+          Util.config.set('universe', Number.parseInt(answers.universe, 10));
+          Util.config.set('colorloop', answers.colorloop);
+          Util.config.set(
+            'transition',
+            answers.transitionChannel
+              ? 'channel'
+              : Number.parseInt(answers.transition, 10)
+          );
+          Util.config.set(
+            'disabledLights',
+            lights
+              .filter((light) => !answers.lights.includes(light.id))
               .reduce((l, light) => {
                 l[light.id] = true;
                 return l;
-              }, {}));
-            console.log(`Configuration saved at ${chalk.green(Util.config.path)}`);
-          });
-      });
+              }, {})
+          );
+          console.log(
+            `Configuration saved at ${chalk.green(Util.config.path)}`
+          );
+        });
+    });
   }
 
   _shuffle(array) {
@@ -271,17 +335,21 @@ class DmxHue {
     return array;
   }
 
-  run() {
+  async run() {
     if (this._args.help) {
       Util.exit(help, 0);
     } else if (this._args.version) {
+      const file = fs.readFileSync(path.join(__dirname, 'package.json'));
+      const pkg = JSON.parse(file);
       Util.exit(pkg.version, 0);
     } else if (this._args._[0] === 'setup') {
-      return this._args.list ? this._hue.listBridges() : this.setup(this._args.ip, this._args.force);
+      return this._args.list
+        ? this._hue.listBridges()
+        : this.setup(this._args.ip, this._args.force);
     }
 
     if (this._args.transition !== 'channel') {
-      const value = parseInt(this._args.transition, 10);
+      const value = Number.parseInt(this._args.transition, 10);
       this._args.transition = value >= 0 ? value : 0;
     }
 
@@ -298,5 +366,3 @@ class DmxHue {
     });
   }
 }
-
-module.exports = DmxHue;
