@@ -1,4 +1,6 @@
 #!/usr/bin/env node
-const DmxHue = require('../index');
+import process from 'node:process';
+import { DmxHue } from '../index.js';
+
 const cli = new DmxHue(process.argv.slice(2));
 cli.run();
