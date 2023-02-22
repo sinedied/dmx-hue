@@ -79,12 +79,12 @@ class DmxHue {
         options.lights = ordered.concat(remaining);
         options.transitionChannel = options.transition === 'channel';
         options.colors = {};
-        const dmxChannelCount = (3 * options.lights.length) + (options.transitionChannel ? 1 : 0);
+        const dmxChannelCount = (5 * options.lights.length) + (options.transitionChannel ? 1 : 0);
         const extraDmxAddress = options.address + dmxChannelCount - 512;
 
         if (extraDmxAddress >= 0) {
           console.warn(chalk.yellow('Warning: not enough DMX channels, some lights will be unavailable'));
-          const lightsToRemove = Math.ceil(extraDmxAddress / 3.0);
+          const lightsToRemove = Math.ceil(extraDmxAddress / 5.0);
           options.lights = options.lights.slice(0, -lightsToRemove);
         }
 
@@ -105,7 +105,7 @@ class DmxHue {
         }
         options.lights.forEach(light => {
           console.log(` ${chalk.cyan(`${currentAddress}:`)} ${light.name} ${chalk.grey(`(Hue ID: ${light.id})`)}`);
-          currentAddress += 3;
+          currentAddress += 5;
         });
         console.log('\nArtNet node started (CTRL+C to quit)');
       });
@@ -128,7 +128,7 @@ class DmxHue {
       address++;
     }
 
-    const dmx = dmxData.slice(address, address + (3 * options.lights.length));
+    const dmx = dmxData.slice(address, address + (5 * options.lights.length));
     let j = 0;
     const length = options.lights.length;
     let indices = Array.from({length}, (_, i) => i);
@@ -137,16 +137,16 @@ class DmxHue {
     let i;
     for (i of indices) {
       const lightId = options.lights[i].id;
-      j = i * 3;
-      const color = dmx.slice(j, j + 3);
+      j = i * 5;
+      const color = dmx.slice(j, j + 5);
       const previous = options.colors[lightId];
 
       // Update light only if color changed
-      if (!previous || color[0] !== previous[0] || color[1] !== previous[1] || color[2] !== previous[2]) {
+      if (!previous || color[0] !== previous[0] || color[1] !== previous[1] || color[2] !== previous[2] || color[3] !== previous[3] || color[4] !== previous[4]) {
         // Rate limit Hue API to 0,1s between calls
         const now = new Date().getTime();
         if (options.noLimit || now - this._lastUpdate >= 100) {
-          const state = this._hue.createLightState(color[0], color[1], color[2], options);
+          const state = this._hue.createLightState(color[0], color[1], color[2], color[3], color[4], options);
           this._lastUpdate = now;
           this._hue.setLight(lightId, state);
           options.colors[lightId] = color;
