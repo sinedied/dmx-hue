@@ -35,6 +35,7 @@ Options:
   -c, --colorloop  Enable colorloop feature
                    When enabled, setting all RGB channels of a light to 1 will
                    enable colorloop mode.
+  -w, --white      Enable 2 additional channels for white balance control
   -n, --no-limit   Disable safety rate limiting
                    Warning: when this option is enabled, make sure to not send
                    more than <number_of_lights>/10 updates per second, or you
@@ -91,7 +92,10 @@ want to go creative and be able to adjust transition times dynamically, you can 
 
 #### White control
 
-Channel 4-5 for each fixture are reserved for white control. When R/G/B channels are at value '0', channel 4 will control temperature, and channel 5 will control brightness. Brightness is currently overriden by R/G/B channels.
+When option `--white` is enabled, channels 4-5 for each fixture are reserved for white control. When R/G/B channels are at value `0`, channel 4 will control temperature, and channel 5 will control brightness. Brightness is currently overriden by R/G/B channels if they are not at value `0`.
+
+Using this option also enables control of Philips White Ambience Lights when R/G/B channels are at value `0`.
+
 ## Philips Hue response times vs DMX
 
 With the Philips Hue API it’s only possible to update the state of bulbs 10 times per second, 1 bulb at a time.
