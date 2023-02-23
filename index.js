@@ -38,14 +38,7 @@ ${chalk.bold('Commands:')}
 export class DmxHue {
   constructor(args) {
     this._args = minimist(args, {
-      boolean: [
-        'list',
-        'force',
-        'help',
-        'version',
-        'colorloop',
-        'white'
-      ],
+      boolean: ['list', 'force', 'help', 'version', 'colorloop', 'white'],
       string: ['ip', 'host', 'transition'],
       number: ['address', 'universe'],
       alias: {
