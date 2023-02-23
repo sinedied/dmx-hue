@@ -25,10 +25,6 @@ ${chalk.bold('Options:')}
                    When enabled, setting all RGB channels of a light to 1 will
                    enable colorloop mode.
   -w, --white      Enable 2 additional channels for white balance control
-  -n, --no-limit   Disable safety rate limiting
-                   Warning: when this option is enabled, make sure to not send
-                   more than <number_of_lights>/10 updates per second, or you
-                   might overload your Hue bridge.
 
 Note: options overrides settings saved during setup.
 
@@ -48,8 +44,7 @@ export class DmxHue {
         'help',
         'version',
         'colorloop',
-        'white',
-        'no-limit'
+        'white'
       ],
       string: ['ip', 'host', 'transition'],
       number: ['address', 'universe'],
@@ -61,13 +56,10 @@ export class DmxHue {
         t: 'transition',
         c: 'colorloop',
         w: 'white',
-        n: 'no-limit',
         u: 'universe'
       }
     });
     this._hue = new Hue();
-    this._lastUpdate = 0;
-    this._delayedUpdate = null;
   }
 
   start(options) {
@@ -122,11 +114,6 @@ export class DmxHue {
       })
       .then(() => {
         let currentAddress = options.address;
-        if (options.noLimit) {
-          console.warn(
-            chalk.yellow('Warning, safety rate limiting is disabled!\n')
-          );
-        }
 
         console.log(
           chalk.bold(`DMX addresses on universe ${options.universe}:`)
@@ -167,11 +154,6 @@ export class DmxHue {
   }
 
   _updateLights(dmxData, options) {
-    if (this._delayedUpdate) {
-      clearTimeout(this._delayedUpdate);
-      this._delayedUpdate = null;
-    }
-
     let address = options.address - 1;
 
     if (options.transitionChannel) {
@@ -198,36 +180,25 @@ export class DmxHue {
 
       // Update light only if color changed
       if (this._hasColorChanged(previous, color, dmxChannelsPerFixture)) {
-        // Rate limit Hue API to 0,1s between calls
-        const now = Date.now();
-        if (options.noLimit || now - this._lastUpdate >= 100) {
-          const state = options.white
-            ? this._hue.createLightState(
-                color[0],
-                color[1],
-                color[2],
-                color[3],
-                color[4],
-                options
-              )
-            : this._hue.createLightState(
-                color[0],
-                color[1],
-                color[2],
-                undefined,
-                undefined,
-                options
-              );
-          this._lastUpdate = now;
-          this._hue.setLight(lightId, state);
-          options.colors[lightId] = color;
-        } else if (!this._delayedUpdate) {
-          // Make sure to apply update later if changes could not be applied
-          this._delayedUpdate = setTimeout(
-            () => this._updateLights(dmxData, options),
-            100
-          );
-        }
+        const state = options.white
+          ? this._hue.createLightState(
+              color[0],
+              color[1],
+              color[2],
+              color[3],
+              color[4],
+              options
+            )
+          : this._hue.createLightState(
+              color[0],
+              color[1],
+              color[2],
+              undefined,
+              undefined,
+              options
+            );
+        this._hue.setLight(lightId, state);
+        options.colors[lightId] = color;
       }
     }
   }
@@ -359,7 +330,6 @@ export class DmxHue {
       colorloop: this._args.colorloop || Util.config.get('colorloop') || false,
       white: this._args.white || Util.config.get('white') || false,
       transition: this._args.transition || Util.config.get('transition') || 100,
-      noLimit: this._args['no-limit'] || Util.config.get('noLimit') || false,
       universe: this._args.universe || Util.config.get('universe') || 0,
       disabled: Util.config.get('disabledLights') || {},
       order: Util.config.get('lightsOrder') || []
