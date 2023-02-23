@@ -6,7 +6,7 @@ import inquirer from 'inquirer';
 import chalk from 'chalk';
 import Util from './lib/util.js';
 import Hue from './lib/hue.js';
-import ArtNet from './lib/artnet.js';
+import { listenArtNet } from './lib/artnet.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -114,7 +114,7 @@ export class DmxHue {
           options.lights = options.lights.slice(0, -lightsToRemove);
         }
 
-        return ArtNet.listen(options.host, (data) => {
+        return listenArtNet(options.host, (data) => {
           if (data.universe === options.universe) {
             this._updateLights(data.dmx, options);
           }
