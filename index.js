@@ -308,7 +308,7 @@ export class DmxHue {
       Util.exit(pkg.version, 0);
     } else if (this._args._[0] === 'setup') {
       return this._args.list
-        ? this._hue.listBridges()
+        ? this._hue.listBridges(true)
         : this.setup(this._args.ip, this._args.force);
     }
 

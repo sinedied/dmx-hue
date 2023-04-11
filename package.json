@@ -46,7 +46,7 @@
     "conf": "^11.0.1",
     "inquirer": "^9.1.4",
     "minimist": "^1.2.8",
-    "node-hue-api": "^2.4.1"
+    "node-hue-api": "^4.0.11"
   },
   "devDependencies": {
     "semantic-release": "^20.1.0",
