@@ -49,9 +49,9 @@
     "node-hue-api": "^4.0.11"
   },
   "devDependencies": {
-    "semantic-release": "^20.1.0",
-    "semantic-release-npm-github": "^3.0.0",
-    "xo": "^0.53.1"
+    "semantic-release": "^21.0.1",
+    "semantic-release-npm-github": "^4.0.0",
+    "xo": "^0.54.1"
   },
   "engines": {
     "node": ">=16.0.0"
