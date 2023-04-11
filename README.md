@@ -101,3 +101,14 @@ some major differences in how quickly we can update your lights using this softw
 This is especially noticeable when using automation sequences, if you try to update Hue lights quicker than 0.1s times
 the number of lights in your projects, some updates may be skipped. This is unfortunately a limitation with the Hue
 lights API and I cannot do anything about that.
+
+## Development
+
+To run the project without installing, clone the repository and run the following commands from the folder:
+
+```bash
+npm install
+npm start
+```
+
+Changes you make to the source will be immediately available when you run in this way.
