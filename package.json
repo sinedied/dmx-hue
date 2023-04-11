@@ -15,6 +15,7 @@
   "scripts": {
     "lint": "xo",
     "lint:fix": "xo --fix",
+    "start": "./bin/dmx-hue.js",
     "test": "xo",
     "release:check": "semantic-release --dry-run"
   },
