@@ -319,13 +319,13 @@ export class DmxHue {
 
     return this.start({
       host: this._args.host,
-      address: this._args.address || Util.config.get('dmxAddress') || 1,
-      colorloop: this._args.colorloop || Util.config.get('colorloop') || false,
-      white: this._args.white || Util.config.get('white') || false,
-      transition: this._args.transition || Util.config.get('transition') || 100,
-      universe: this._args.universe || Util.config.get('universe') || 0,
-      disabled: Util.config.get('disabledLights') || {},
-      order: Util.config.get('lightsOrder') || []
+      address: this._args.address ?? Util.config.get('dmxAddress') ?? 1,
+      colorloop: this._args.colorloop ?? Util.config.get('colorloop') ?? false,
+      white: this._args.white ?? Util.config.get('white') ?? false,
+      transition: this._args.transition ?? Util.config.get('transition') ?? 100,
+      universe: this._args.universe ?? Util.config.get('universe') ?? 0,
+      disabled: Util.config.get('disabledLights') ?? {},
+      order: Util.config.get('lightsOrder') ?? []
     });
   }
 }
