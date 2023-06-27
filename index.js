@@ -222,8 +222,14 @@ export class DmxHue {
           {
             type: 'confirm',
             name: 'colorloop',
-            message: 'Enable colorloop feature',
-            default: Util.config.get('colorloop') || false
+            message: 'Enable colorloop feature (when RGB channels are set to 1)',
+            default: Util.config.get('colorloop') ?? false
+          },
+          {
+            type: 'confirm',
+            name: 'white',
+            message: 'Enable white control feature (adds 2 DMX channels per light)',
+            default: Util.config.get('white') ?? false
           },
           {
             type: 'confirm',
