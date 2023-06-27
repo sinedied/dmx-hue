@@ -197,8 +197,8 @@ export class DmxHue {
   }
 
   _setupOptions() {
-    const disabled = Util.config.get('disabledLights') || {};
-    const transition = Util.config.get('transition') || 0;
+    const disabled = Util.config.get('disabledLights') ?? {};
+    const transition = Util.config.get('transition') ?? 0;
     this._hue.getLights().then((lights) => {
       return inquirer
         .prompt([
@@ -206,7 +206,7 @@ export class DmxHue {
             type: 'input',
             name: 'dmxAddress',
             message: 'Set DMX address (range 1-511)',
-            default: Util.config.get('dmxAddress') || 1,
+            default: Util.config.get('dmxAddress') ?? 1,
             validate(input) {
               const value = Number.parseInt(input, 10);
               return value > 0 && value <= 511;
@@ -216,7 +216,7 @@ export class DmxHue {
             type: 'input',
             name: 'universe',
             message: 'Set Art-Net universe',
-            default: Util.config.get('universe') || 0,
+            default: Util.config.get('universe') ?? 0,
             validate: (input) => Number.parseInt(input, 10) >= 0
           },
           {
@@ -235,7 +235,7 @@ export class DmxHue {
             type: 'input',
             name: 'transition',
             message: 'Set transition time in ms',
-            default: transition === 'channel' ? 100 : transition,
+            default: transition === 'channel' ? '100' : transition,
             when: (answers) => !answers.transitionChannel,
             validate: (input) => Number.parseInt(input, 10) > 0
           },
@@ -257,6 +257,7 @@ export class DmxHue {
           );
           Util.config.set('universe', Number.parseInt(answers.universe, 10));
           Util.config.set('colorloop', answers.colorloop);
+          Util.config.set('white', answers.white);
           Util.config.set(
             'transition',
             answers.transitionChannel
