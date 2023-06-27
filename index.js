@@ -42,8 +42,15 @@ ${chalk.bold('Commands:')}
 export class DmxHue {
   constructor(args) {
     this._args = minimist(args, {
-      boolean: ['list', 'force', 'help', 'version', 'colorloop', 'white',
-        'no-limit'],
+      boolean: [
+        'list',
+        'force',
+        'help',
+        'version',
+        'colorloop',
+        'white',
+        'no-limit'
+      ],
       string: ['ip', 'host', 'transition'],
       number: ['address', 'universe'],
       alias: {
@@ -251,13 +258,15 @@ export class DmxHue {
           {
             type: 'confirm',
             name: 'colorloop',
-            message: 'Enable colorloop feature (when RGB channels are set to 1)',
+            message:
+              'Enable colorloop feature (when RGB channels are set to 1)',
             default: Util.config.get('colorloop') ?? false
           },
           {
             type: 'confirm',
             name: 'white',
-            message: 'Enable white control feature (adds 2 DMX channels per light)',
+            message:
+              'Enable white control feature (adds 2 DMX channels per light)',
             default: Util.config.get('white') ?? false
           },
           {
