@@ -36,6 +36,10 @@ Options:
                    When enabled, setting all RGB channels of a light to 1 will
                    enable colorloop mode.
   -w, --white      Enable 2 additional channels for white balance control
+  -n, --no-limit   Disable safety rate limiting
+                   Warning: when this option is enabled, make sure to not send
+                   more than <number_of_lights>/10 updates per second, or you
+                   might overload your Hue bridge.
 
 Note: options overrides settings saved during setup.
 
@@ -101,6 +105,12 @@ some major differences in how quickly we can update your lights using this softw
 This is especially noticeable when using automation sequences, if you try to update Hue lights quicker than 0.1s times
 the number of lights in your projects, some updates may be skipped. This is unfortunately a limitation with the Hue
 lights API and I cannot do anything about that.
+
+### Safety rate limiting
+
+By default, a safety rate limit is enforced so there is always a 0,1s interval between Hue API calls. You can disable
+this limit using the `--no-limit` option, but then you have to make sure to not make more than *number_of_lights / 10*
+DMX value changes per second, or your Hue bridge might get overloaded and may crash.
 
 ## Development
 
