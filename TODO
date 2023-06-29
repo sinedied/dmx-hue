@@ -1,0 +1,10 @@
+- [ ] support entertainments groups
+  https://github.com/jeffreykog/artnet-hue-entertainment
+- [ ] TS?
+- [ ] color groups ? rooms?
+- [ ] ability to customize controls for each group/light
+  * [ ] RGB
+  * [ ] Color loop (need RGB)
+  * [ ] White channels (2 DMX)
+  * [ ] Transition time
+  
