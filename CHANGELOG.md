@@ -1,3 +1,11 @@
+## [2.0.1](https://github.com/sinedied/dmx-hue/compare/2.0.0...2.0.1) (2023-07-18)
+
+
+### Bug Fixes
+
+* allow lightOrder property to be either ints or strings ([#41](https://github.com/sinedied/dmx-hue/issues/41)) ([ec951f3](https://github.com/sinedied/dmx-hue/commit/ec951f3fc70c892ddeeb1f43453f416fc05685b6))
+* regression causing config params to be ignored (closes [#41](https://github.com/sinedied/dmx-hue/issues/41)) ([5bcf09c](https://github.com/sinedied/dmx-hue/commit/5bcf09ca413acaffe4d9f7652c3e1ca6c220cb7a))
+
 # [2.0.0](https://github.com/sinedied/dmx-hue/compare/1.4.2...2.0.0) (2023-06-28)
 
 
