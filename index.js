@@ -82,7 +82,9 @@ export class DmxHue {
       .getLights()
       .then((lights) => {
         const ordered = options.order.reduce((r, id) => {
-          const light = lights.find((light) => light.id === id.toString());
+          const light = lights.find(
+            (light) => String(light.id) === id.toString()
+          );
           if (light && !options.disabled[id]) {
             r.push(light);
           }
