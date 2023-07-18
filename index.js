@@ -34,7 +34,7 @@ Note: options overrides settings saved during setup.
 
 ${chalk.bold('Commands:')}
   setup            Configure hue bridge and DMX options
-    -l, --list     List bridges on the network
+    -l, --list  force   List bridges on the network
     -i, --ip       Set bridge IP (use first bridge if not specified)
     --force        Force bridge setup if already configured
 `;
@@ -134,7 +134,7 @@ export class DmxHue {
           chalk.bold(`DMX addresses on universe ${options.universe}:`)
         );
         if (options.transitionChannel) {
-          console.log(` ${currentAddress++}: transition time`);
+          console.log(` ${chalk.cyan(currentAddress++)}: transition time`);
         }
 
         for (const light of options.lights) {
@@ -364,13 +364,17 @@ export class DmxHue {
       this._args.transition = value >= 0 ? value : 0;
     }
 
+    console.log(this._args.transition);
+
     return this.start({
       host: this._args.host,
       address: this._args.address ?? Util.config.get('dmxAddress') ?? 1,
-      colorloop: this._args.colorloop ?? Util.config.get('colorloop') ?? false,
-      white: this._args.white ?? Util.config.get('white') ?? false,
-      transition: this._args.transition ?? Util.config.get('transition') ?? 100,
-      noLimit: this._args['no-limit'] ?? Util.config.get('noLimit') ?? false,
+      colorloop:
+        (this._args.colorloop || Util.config.get('colorloop')) ?? false,
+      white: (this._args.white || Util.config.get('white')) ?? false,
+      transition:
+        (this._args.transition || Util.config.get('transition')) ?? 100,
+      noLimit: (this._args['no-limit'] || Util.config.get('noLimit')) ?? false,
       universe: this._args.universe ?? Util.config.get('universe') ?? 0,
       disabled: Util.config.get('disabledLights') ?? {},
       order: Util.config.get('lightsOrder') ?? []
