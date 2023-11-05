@@ -353,8 +353,6 @@ export class DmxHue {
       this._args.transition = value >= 0 ? value : 0;
     }
 
-    console.log(this._args.transition);
-
     return this.start({
       host: this._args.host,
       address: this._args.address ?? Util.config.get('dmxAddress') ?? 1,
