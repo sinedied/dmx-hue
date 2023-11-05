@@ -70,7 +70,7 @@ export class DmxHue {
     this._delayedUpdate = null;
   }
 
-  start(options) {
+  async start(options) {
     if (options.address <= 0 || options.address > 511) {
       Util.exit('Invalid DMX address');
     }
@@ -78,76 +78,65 @@ export class DmxHue {
     options = { ...options };
     const dmxChannelsPerFixture = options.white ? 5 : 3;
 
-    this._hue
-      .getLights()
-      .then((lights) => {
-        const ordered = options.order.reduce((r, id) => {
-          const light = lights.find(
-            (light) => String(light.id) === id.toString()
-          );
-          if (light && !options.disabled[id]) {
-            r.push(light);
-          }
+    const lights = await this._hue.getLights();
+    const ordered = options.order.reduce((r, id) => {
+      const light = lights.find((light) => String(light.id) === id.toString());
+      if (light && !options.disabled[id]) {
+        r.push(light);
+      }
 
-          return r;
-        }, []);
-        const remaining = lights.filter(
-          (light) =>
-            !options.disabled[light.id] &&
-            !ordered.some((o) => light.id === o.id)
-        );
-        options.lights = [...ordered, ...remaining];
-        options.transitionChannel = options.transition === 'channel';
-        options.colors = {};
-        const dmxChannelCount =
-          dmxChannelsPerFixture * options.lights.length +
-          (options.transitionChannel ? 1 : 0);
-        const extraDmxAddress = options.address + dmxChannelCount - 512;
+      return r;
+    }, []);
+    const remaining = lights.filter(
+      (light) =>
+        !options.disabled[light.id] && !ordered.some((o) => light.id === o.id)
+    );
+    options.lights = [...ordered, ...remaining];
+    options.transitionChannel = options.transition === 'channel';
+    options.colors = {};
+    const dmxChannelCount =
+      dmxChannelsPerFixture * options.lights.length +
+      (options.transitionChannel ? 1 : 0);
+    const extraDmxAddress = options.address + dmxChannelCount - 512;
 
-        if (extraDmxAddress >= 0) {
-          console.warn(
-            chalk.yellow(
-              'Warning: not enough DMX channels, some lights will be unavailable'
-            )
-          );
-          const lightsToRemove = Math.ceil(
-            extraDmxAddress / dmxChannelsPerFixture
-          );
-          options.lights = options.lights.slice(0, -lightsToRemove);
-        }
+    if (extraDmxAddress >= 0) {
+      console.warn(
+        chalk.yellow(
+          'Warning: not enough DMX channels, some lights will be unavailable'
+        )
+      );
+      const lightsToRemove = Math.ceil(extraDmxAddress / dmxChannelsPerFixture);
+      options.lights = options.lights.slice(0, -lightsToRemove);
+    }
 
-        return listenArtNet(options.host, (data) => {
-          if (data.universe === options.universe) {
-            this._updateLights(data.dmx, options);
-          }
-        });
-      })
-      .then(() => {
-        let currentAddress = options.address;
-        if (options.noLimit) {
-          console.warn(
-            chalk.yellow('Warning, safety rate limiting is disabled!\n')
-          );
-        }
+    await listenArtNet(options.host, (data) => {
+      if (data.universe === options.universe) {
+        this._updateLights(data.dmx, options);
+      }
+    });
 
-        console.log(
-          chalk.bold(`DMX addresses on universe ${options.universe}:`)
-        );
-        if (options.transitionChannel) {
-          console.log(` ${chalk.cyan(currentAddress++)}: transition time`);
-        }
+    let currentAddress = options.address;
+    if (options.noLimit) {
+      console.warn(
+        chalk.yellow('Warning, safety rate limiting is disabled!\n')
+      );
+    }
 
-        for (const light of options.lights) {
-          console.log(
-            ` ${chalk.cyan(`${currentAddress}:`)} ${light.name} ${chalk.grey(
-              `(Hue ID: ${light.id})`
-            )}`
-          );
-          currentAddress += dmxChannelsPerFixture;
-        }
+    console.log(chalk.bold(`DMX addresses on universe ${options.universe}:`));
+    if (options.transitionChannel) {
+      console.log(` ${chalk.cyan(currentAddress++)}: transition time`);
+    }
 
-        console.log('\nArtNet node started (CTRL+C to quit)');
-      });
+    for (const light of options.lights) {
+      console.log(
+        ` ${chalk.cyan(`${currentAddress}:`)} ${light.name} ${chalk.grey(
+          `(Hue ID: ${light.id})`
+        )}`
+      );
+      currentAddress += dmxChannelsPerFixture;
+    }
+
+    console.log('\nArtNet node started (CTRL+C to quit)');
   }
 
   setup(ip, force) {
