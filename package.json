@@ -44,7 +44,7 @@
   "dependencies": {
     "chalk": "^5.2.0",
     "color": "^4.2.3",
-    "conf": "^11.0.1",
+    "conf": "^12.0.0",
     "inquirer": "^9.1.4",
     "minimist": "^1.2.8",
     "node-hue-api": "^4.0.11"
@@ -52,10 +52,10 @@
   "devDependencies": {
     "semantic-release": "^22.0.7",
     "semantic-release-npm-github": "^5.0.0",
-    "xo": "^0.54.1"
+    "xo": "^0.56.0"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.17.0"
   },
   "prettier": {
     "trailingComma": "none",
