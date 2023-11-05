@@ -1,3 +1,18 @@
+# [3.0.0](https://github.com/sinedied/dmx-hue/compare/2.0.1...3.0.0) (2023-11-05)
+
+
+### Bug Fixes
+
+* catch ligh state change errors (fix [#44](https://github.com/sinedied/dmx-hue/issues/44)) ([e8c21c8](https://github.com/sinedied/dmx-hue/commit/e8c21c898b81d004a2685583b5ba53f94aab8f0e))
+
+
+* chore!: update packages ([a7bc8fe](https://github.com/sinedied/dmx-hue/commit/a7bc8fe3352aa7dea6eee567a558678c7c752ce0))
+
+
+### BREAKING CHANGES
+
+* requires Node >= 18
+
 ## [2.0.1](https://github.com/sinedied/dmx-hue/compare/2.0.0...2.0.1) (2023-07-18)
 
 
